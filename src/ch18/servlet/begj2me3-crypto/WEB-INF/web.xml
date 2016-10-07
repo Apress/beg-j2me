@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<!DOCTYPE web-app
+    PUBLIC "-//Sun Microsystems, Inc.//DTD Web Application 2.3//EN"
+    "http://java.sun.com/dtd/web-app_2_3.dtd">
+
+<web-app>
+  <servlet>
+    <servlet-name>PasswordServlet</servlet-name>
+    <servlet-class>PasswordServlet</servlet-class>
+  </servlet>
+  <servlet>
+    <servlet-name>StealthServlet</servlet-name>
+    <servlet-class>StealthServlet</servlet-class>
+  </servlet>
+  
+  <servlet-mapping>
+    <servlet-name>PasswordServlet</servlet-name>
+    <url-pattern>/password</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>StealthServlet</servlet-name>
+    <url-pattern>/stealth</url-pattern>
+  </servlet-mapping>
+</web-app>

@@ -1,0 +1,76 @@
+<project name="wj2-crypto" default="obfuscate_proguard" basedir="..">
+  <property name="project" value="wj2-crypto"/>
+  
+   <!-- set the path to location of your WTK 2.x directory -->
+  <property name="midp" value="/jdk1.3/wtk22"/>
+
+   <!-- set the path to your MIDP and CLDC jars, here it is JTWI 1.0 compatible -->
+  <property name="midp_lib" value="${midp}/lib/midpapi20.jar;${midp}/lib/cldcapi10.jar"/>
+  
+  <!-- The following property is needed for
+       obufscate_proguard. -->
+  <!-- set the path to location of your proguard.jar -->
+  <property name="proguard" value="/jdk1.3/proguard3.2/lib/proguard.jar"/>
+
+  <!-- Obufscates using ProGuard. -->
+  <target name="obfuscate_proguard" depends="compile, copylib">
+    <mkdir dir="build/proguard"/>
+    <jar basedir="build/classes"
+        jarfile="build/proguard/${project}-input.jar"/>
+    
+    <java fork="yes" classname="proguard.ProGuard"
+        classpath="${proguard}">
+      <arg line="-libraryjars ${midp_lib}"/>
+      <arg line="-injars build/proguard/${project}-input.jar"/>
+      <arg line="-outjar build/proguard/${project}-output.jar"/>
+      <arg line="-keep 'public class * extends javax.microedition.midlet.MIDlet'"/>
+      <arg line="-defaultpackage"/>
+      <arg line="-dontusemixedcaseclassnames"/>
+    </java>
+
+    <mkdir dir="build/obfuscated"/>
+    <unjar src="build/proguard/${project}-output.jar"
+        dest="build/obfuscated"/>
+  </target>
+  
+  <!-- Doesn't obfuscate, just copies class files. -->
+  <target name="obfuscate_null" depends="compile, copylib">
+    <mkdir dir="build/obfuscated"/>
+    <copy todir="build/obfuscated">
+      <fileset dir="build/classes"/>
+    </copy>
+  </target>
+  
+  <!-- Unjars the library APIs in preparation for obfuscation. -->
+  <target name="copylib" depends="init">
+    <unjar src="lib/midp_classes.zip" dest="build/classes"/>
+  </target>
+  
+  <!-- Compiles the source code. -->
+  <target name="compile" depends="init">
+    <mkdir dir="build/classes"/>
+    <javac destdir="build/classes" srcdir="src"
+        classpath="lib/midp_classes.zip"
+        bootclasspath="${midp_lib}"  />
+  </target>
+  
+  <target name="init">
+    <tstamp/>
+  </target>
+  
+    
+  <!-- Cleans up everything, including the binaries,
+       API documentation, and source zip. -->
+  <target name="reallyclean" depends="clean">
+    <delete dir="build/bin"/>
+  </target>
+    
+  <!-- Cleans up intermediate build files. -->
+  <target name="clean">
+    <delete dir="build/classes"/>
+    <delete dir="build/obfuscated"/>
+    <delete dir="build/preverified"/>
+    <!-- ProGuard -->
+    <delete dir="build/proguard"/>
+  </target>
+</project>
